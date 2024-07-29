@@ -1,0 +1,38 @@
+{
+  "name": "mqueue-node",
+  "version": "1.0.0",
+  "description": "Multiple queue for node client",
+  "main": "dist/lib.js",
+  "sideEffects": false,
+  "scripts": {
+    "prepare": "husky install",
+    "lint": "eslint ./src/**/*.ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "lint-staged": {
+    "src/**/*.{ts}": [
+      "eslint --fix"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "commit-msg": "bun run commitlint --edit $1"
+    }
+  },
+  "engines": {
+    "node": "^18.17.1",
+    "yarn": "^1.22.19"
+  },
+  "devDependencies": {
+    "eslint": "^9.7.0",
+    "husky": "^9.1.1",
+    "prettier": "^3.3.3"
+  },
+  "dependencies": {
+    "@aws-sdk/client-eventbridge": "^3.617.0",
+    "@aws-sdk/client-kinesis": "^3.616.0",
+    "@aws-sdk/client-sqs": "^3.616.0"
+  }
+}

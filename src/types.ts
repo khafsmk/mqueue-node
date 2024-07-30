@@ -1,12 +1,10 @@
 import { PutEventsCommandOutput } from '@aws-sdk/client-eventbridge';
 import { CreateQueueCommandOutput } from '@aws-sdk/client-sqs';
 
-export enum Events {
-  LoanUpdate = 'loan_update',
-  LoanCreate = 'loan_create',
-}
-
-export type EventString = keyof typeof Events;
+export const Events: { [key: string]: string; } = {
+  'LOAN_UPDATE': 'loan_update',
+  'LOAN_CREATE': 'loan_create',
+};
 
 export interface EventInput {
   source: string;

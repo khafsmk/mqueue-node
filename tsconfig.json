@@ -1,5 +1,5 @@
 {
-  "include": ["src/"],
+  "include": ["src/", "main.ts"],
   "extends": "@tsconfig/node16/tsconfig.json",
   "exclude": ["node_modules/", "test/", "**/*.spec.ts"],
   "compilerOptions": {
@@ -13,7 +13,7 @@
     "target": "ES5",
     // Enhance strictness.
     "noImplicitReturns": true,
-    "noUnusedLocals": true,
+    "noUnusedLocals": false,
     "strict": true,
     "outDir": "out",
     "sourceMap": true

@@ -6,7 +6,7 @@ import {
   PutEventsCommandOutput,
 } from '@aws-sdk/client-eventbridge';
 const crypto = require('crypto');
-import { CommandOutput, EventString,  EventInput, Handler, Record, Events } from './types';
+import { CommandOutput, EventInput, Handler, Record, Events } from './types';
 import { CreateQueueCommand, CreateQueueCommandInput, SQSClient, SQSClientConfig } from '@aws-sdk/client-sqs';
 
 export class Client {
@@ -30,15 +30,11 @@ export class Client {
     this.newUUID = () => crypto.randomUUID();
   }
 
-  public async publish(event: EventString, input: EventInput): Promise<CommandOutput> {
-    const evt = Events[event];
-    if (!evt) {
-      throw new Error(`unknown event: ${event}`);
-    }
+  public async publish(event: string, input: EventInput): Promise<CommandOutput> {
     const record: Record = {
       ...input,
       serviceName: this.serviceName,
-      event: evt,
+      event,
       timestamp: this.timeNow(),
       uuid: this.newUUID(),
     };

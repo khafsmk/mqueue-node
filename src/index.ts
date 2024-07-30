@@ -5,16 +5,9 @@ import {
   PutEventsCommandInput,
   PutEventsCommandOutput,
 } from '@aws-sdk/client-eventbridge';
-import { Events } from './events';
 const crypto = require('crypto');
-import { CommandOutput, Handler, Record } from './types';
+import { CommandOutput, EventString,  EventInput, Handler, Record, Events } from './types';
 import { CreateQueueCommand, CreateQueueCommandInput, SQSClient, SQSClientConfig } from '@aws-sdk/client-sqs';
-
-interface EventInput {
-  source: string;
-  data: any;
-  eventTarget: string; // bus name or queue url
-}
 
 export class Client {
   private squadName: string = '';
@@ -37,16 +30,15 @@ export class Client {
     this.newUUID = () => crypto.randomUUID();
   }
 
-  public async publish(event: keyof Event, input: EventInput): Promise<CommandOutput> {
-    if (!(event in Events)) {
+  public async publish(event: EventString, input: EventInput): Promise<CommandOutput> {
+    const evt = Events[event];
+    if (!evt) {
       throw new Error(`unknown event: ${event}`);
     }
     const record: Record = {
+      ...input,
       serviceName: this.serviceName,
-      source: input.source,
-      eventTarget: input.eventTarget,
-      data: input.data,
-      event: event,
+      event: evt,
       timestamp: this.timeNow(),
       uuid: this.newUUID(),
     };
@@ -70,7 +62,7 @@ export class EventBridgeHandler implements Handler {
           ],
           DetailType: 'STRING_VALUE',
           Detail: 'STRING_VALUE',
-          EventBusName: record.eventTarget,
+          EventBusName: record.queueName,
           TraceHeader: 'STRING_VALUE',
         },
       ],
@@ -88,7 +80,7 @@ export class SQSHandler implements Handler {
   }
   async handle(record: Record): Promise<CommandOutput> {
     const input: CreateQueueCommandInput = {
-      QueueName: record.eventTarget,
+      QueueName: record.queueName,
       Attributes: {},
       tags: {},
     };
